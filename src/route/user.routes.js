@@ -6,33 +6,48 @@ import {
 } from "../middleware/middleware.index.js"
 import {
 
-        registerUser,
-        loginUser,
-        logoutUser,
-        renewAccessToken,
-        emailVerification
+  registerUser,
+  loginUser,
+  logoutUser,
+  renewAccessToken,
+  emailVerification,
+  updateUserInfo,
+  updateUserAvatar,
+  updateCoverImage,
+  updateUserPassword,
+  currentUser
 
-      } from "../controller/user.controller.js";
+} from "../controller/user.controller.js";
 
 const router = Router();
 
 router.route("/register").post(
 
-            upload.fields([
-              {name:"avatar", maxCount:1},
-              {name:"coverImage", maxCount:1}
-            ]),
+  upload.fields([
+    { name: "avatar", maxCount: 1 },
+    { name: "coverImage", maxCount: 1 }
+  ]),
 
-          registerUser
+  registerUser
 
 )
-router.route("/login").post(upload.none() , loginUser)
+router.route("/login").post(upload.none(), loginUser)
 
-router.route("/logout").post(verifyJWT , logoutUser)
+router.route("/current-user").get(verifyJWT, currentUser)
+
+router.route("/update-info").put(verifyJWT,upload.none() , updateUserInfo)
+
+router.route("/update-avatar").patch(verifyJWT,upload.single("avatar") ,  updateUserAvatar)
+
+router.route("/update-cover-image").patch(verifyJWT,upload.single("coverImage") , updateCoverImage)
+
+router.route("/update-password").put(verifyJWT, upload.none(), updateUserPassword)
+
+router.route("/logout").post(verifyJWT, upload.none() , logoutUser)
 
 router.route("/refresh-token").post(renewAccessToken)
 
-router.route("/send-verification-email").post(verifyJWT , getVerified)
+router.route("/send-verification-email").post(verifyJWT, getVerified)
 
 router.get("/verify-email", emailVerification);
 

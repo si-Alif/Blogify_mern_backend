@@ -107,6 +107,8 @@ const registerUser = asyncHandler(async (req, res, next) => {
     }
   }
 
+
+
   const newUser = await User.create({
     username,
     email,
@@ -389,6 +391,12 @@ const updateUserInfo = asyncHandler(async (req, res, next) => {
 const updateUserAvatar = asyncHandler(async (req, res, next) => {
   const user = req?.user;
 
+  console.log("Have you updated");
+  
+
+  console.log(req?.file);
+
+
   if (!req.file) throw new API_ERROR
     (
       "No avatar uploaded",
@@ -480,6 +488,9 @@ const updateCoverImage = asyncHandler(async (req, res, next) => {
 
 const updateUserPassword = asyncHandler(async (req, res, next) => {
   const { currentPassword, newPassword } = req.body
+
+  console.log(currentPassword);
+  console.log(newPassword);
 
   if (!currentPassword || !newPassword) throw new API_ERROR
     (

@@ -34,8 +34,7 @@ const verifyJWT = asyncHandler(async(req, res ,next)=>{
       }
     )
 
-    req.user = user
-    console.log(user);
+    req.user = user;
 
     next()
   }catch(error){
