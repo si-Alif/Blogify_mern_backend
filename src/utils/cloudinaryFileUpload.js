@@ -1,5 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import { API_ERROR } from "../utils/API_Error.js";
+import fs from "fs"
+
 
 cloudinary.config({
   cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
@@ -22,8 +24,21 @@ const cloudinaryFileUpload = async (localPath) => {
       resource_type: "auto",
     });
 
+    fs.unlinkSync(localPath)
+
     return uploadResult;
   } catch (error) {
+
+    if (fs.existsSync(localPath)) {
+      try {
+        fs.unlinkSync(localPath)
+      } catch (error) {
+        throw new Error(
+          `Error unlinking temporary file: ${localPath}. Error: ${error.message} in cloudinary.js`
+        )
+      }
+    }
+
     throw new API_ERROR(
       error?.message || "Error while uploading to Cloudinary",
       error?.http_code || 500,

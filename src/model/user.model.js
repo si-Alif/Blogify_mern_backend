@@ -54,12 +54,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
       minlength: [6, "Password must be at least 6 characters"],
-      select: false,
+
     },
 
     refreshToken: {
       type: String,
-      select: false,
+
     },
 
     role: {
@@ -79,7 +79,7 @@ const userSchema = new mongoose.Schema(
           type: String,
           enum: ["twitter", "facebook", "instagram", "linkedin", "youtube"],
           required: false,
-          default: null
+          default: []
         },
         url: {
           type: String,
@@ -98,6 +98,7 @@ const userSchema = new mongoose.Schema(
     posts: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "Post",
+
     }],
 
     isVerified: {
@@ -133,8 +134,8 @@ userSchema.methods.generateAccessToken = function () {
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn:process.env.ACCESS_TOKEN_EXPIRY,
-      algorithm:"RS512",
+      expiresIn:process.env.ACCESS_TOKEN_EXPIRY || "15m",
+
 
     },
 
@@ -149,10 +150,11 @@ userSchema.methods.generateRefreshToken = function () {
     },
     process.env.REFRESH_TOKEN_SECRET,
     {
-      expiresIn:process.env.REFRESH_TOKEN_EXPIRY,
-      algorithm:"HS256",
+      expiresIn:process.env.REFRESH_TOKEN_EXPIRY || "7d",
+
     }
   )
 }
+
 
 export const User = mongoose.model("User", userSchema);
