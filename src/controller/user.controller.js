@@ -23,6 +23,8 @@ const registerUser = asyncHandler(async (req, res, next) => {
 
   const validationErrors = [];
 
+  console.log(req.files);
+
   if (!username?.trim())
     validationErrors.push({
       field: "username",
@@ -152,6 +154,8 @@ const registerUser = asyncHandler(async (req, res, next) => {
 const loginUser = asyncHandler(async (req, res, next) => {
   const { username, email, password } = req.body;
 
+  console.log(email);
+
   const validationErrors = [];
   if (!username?.trim() && !email?.trim())
     validationErrors.push({
@@ -163,6 +167,7 @@ const loginUser = asyncHandler(async (req, res, next) => {
     validationErrors.push({
       field: "password",
       message: "Password is required",
+
     });
 
   if (validationErrors.length) {
@@ -196,8 +201,15 @@ const loginUser = asyncHandler(async (req, res, next) => {
   const access_token = user?.generateAccessToken();
   const refresh_token = user?.generateRefreshToken();
 
-  user.refreshToken = refresh_token;
-  await user.save({ validateBeforeSave: false });
+  // user.refreshToken = refresh_token;
+  // await user.save({ validateBeforeSave: false });
+
+  const updateduser = await User.findByIdAndUpdate(
+    user._id,
+    { refreshToken: refresh_token },
+    { new: true }
+  ).select("-password -refreshToken")
+
 
   const loggedInUser = await User.findOne(user?._id);
   return res
@@ -206,12 +218,13 @@ const loginUser = asyncHandler(async (req, res, next) => {
     .cookie("refreshToken", refresh_token, cookie_Options)
     .json(
       API_Response.success(
-        { user: loggedInUser },
+        { user: updateduser },
         {
           statusCode: 200,
           message: "User logged in successfully",
           meta: {
             timestamp: new Date().toISOString(),
+
           },
         },
       ),
@@ -354,6 +367,8 @@ const currentUser = asyncHandler(async (req, res, next) => {
 const updateUserInfo = asyncHandler(async (req, res, next) => {
 
   const { fullName, bio, socialMediaHandles } = req.body
+  console.log(socialMediaHandles);
+
 
   if (!fullName && !bio && !socialMediaHandles) throw new API_ERROR(
     "At least one field is required",
@@ -372,7 +387,7 @@ const updateUserInfo = asyncHandler(async (req, res, next) => {
   user.socialMediaHandles = user.socialMediaHandles?.push(socialMediaHandles) || user.socialMediaHandles;
 
   await user.save({ validateBeforeSave: false })
-
+  
   return res.status(200).json(
     API_Response.success(
       { user },
@@ -388,13 +403,12 @@ const updateUserInfo = asyncHandler(async (req, res, next) => {
 
 })
 
+
 const updateUserAvatar = asyncHandler(async (req, res, next) => {
   const user = req?.user;
 
   console.log("Have you updated");
-  
 
-  console.log(req?.file);
 
 
   if (!req.file) throw new API_ERROR

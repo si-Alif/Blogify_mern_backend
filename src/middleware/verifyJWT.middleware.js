@@ -2,8 +2,13 @@ import jwt from "jsonwebtoken"
 import { API_ERROR, asyncHandler } from "../utils/index.js"
 import { User } from "../model/user.model.js"
 
+
 const verifyJWT = asyncHandler(async(req, res ,next)=>{
+
+
+
   const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer " , "")
+  console.log(token);
 
   if(!token){
     throw new API_ERROR
@@ -17,7 +22,6 @@ const verifyJWT = asyncHandler(async(req, res ,next)=>{
       }
     )
   }
-
 
   try{
     const payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
@@ -41,7 +45,7 @@ const verifyJWT = asyncHandler(async(req, res ,next)=>{
     throw new API_ERROR
     (
       "Invalid access token. Please log in again",
-      403,
+      401,
       {
         errorCode: "invalid_token",
         path: req.originalUrl,

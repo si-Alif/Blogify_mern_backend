@@ -9,21 +9,19 @@ const asyncHandler = (func) => async (req, res, next) => {
   try {
     await func(req, res, next);
   } catch (error) {
-
     throw new API_ERROR(
       error.message || "Something went wrong in asyncHandler",
       error.statusCode || 500,
       {
         errorCode: "async_handler_error",
-        path: `${__dirname}\/${path.basename(__filename)}`,
+        path: `${__dirname}/${path.basename(__filename)}`,
         stack: error.stack,
         cause: error.cause,
-        validationErrors:error?.validationErrors,
+        validationErrors: error?.validationErrors,
         errors: error?.errors,
         data: null,
-        
       }
-    )
+    );
   }
 };
 

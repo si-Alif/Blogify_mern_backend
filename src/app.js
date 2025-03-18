@@ -5,9 +5,12 @@ import cookieParser from "cookie-parser"
 
 const app = express()
 
+console.log(process.env.CORS_ORIGIN);
+
+
 app.use(cors({
   origin:process.env.CORS_ORIGIN,
-  credentials: true
+  credentials: true,
 }))
 
 app.use(
@@ -20,10 +23,12 @@ app.use(express.static("public"))
 
 app.use(cookieParser())
 
-import router from "./route/user.routes.js"
 
+import userRouter from "./route/user.routes.js"
+import postRouter from "./route/post.routes.js"
 
-app.use("/api/v1/user", router)
+app.use("/api/v1/user", userRouter)
+app.use("/api/v1/post", postRouter)
 
 export {
   app

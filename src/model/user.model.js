@@ -77,19 +77,14 @@ const userSchema = new mongoose.Schema(
       {
         platform: {
           type: String,
-          enum: ["twitter", "facebook", "instagram", "linkedin", "youtube"],
+          enum: ["twitter", "facebook", "instagram", "linkedin", "youtube" , "reddit"],
           required: false,
           default: []
         },
         url: {
           type: String,
           required: true,
-          validate: {
-            validator: function (v) {
-              return /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+\/?/.test(v);
-            },
-            message: "Invalid URL",
-          },
+
         },
       },
     ],
